@@ -1,1 +1,3 @@
 This will be a go application that will receive images and identify objects in the image using it's underlying model
+
+Run using `go run main.go`
