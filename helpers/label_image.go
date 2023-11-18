@@ -18,7 +18,7 @@ var VISION_API_KEY = os.Getenv("vision_api_key")
 
 func LabelImage(c *gin.Context, fileName string) {
 	var b bytes.Buffer
-	uri := fmt.Sprint("gs://%w/%w", BUCKET_NAME, fileName)
+	uri := fmt.Sprintf("gs://%s/%s", BUCKET_NAME, fileName)
 
 	labels, err := detectLabelsURI(&b, uri)
 	if err != nil {

@@ -18,25 +18,23 @@ var (
 	CLOUD_BUCKET_CREDENTIALS = os.Getenv("cloud_bucket_service_account_credentials")
 )
 
-func UploadFile(c *gin.Context) string {
+func UploadFile(c *gin.Context) (string, error) {
 	ctx := appengine.NewContext(c.Request)
 
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(CLOUD_BUCKET_CREDENTIALS))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
+			"error": true,
 		})
-		return ""
+		return "", err
 	}
 
 	f, uploadedFile, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
+			"error": true,
 		})
-		return ""
+		return "", err
 	}
 
 	defer f.Close()
@@ -44,33 +42,25 @@ func UploadFile(c *gin.Context) string {
 	sw := storageClient.Bucket(BUCKET_NAME).Object(uploadedFile.Filename).NewWriter(ctx)
 	if _, err := io.Copy(sw, f); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
+			"error": true,
 		})
-		return ""
+		return "", err
 	}
 
 	if err := sw.Close(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
+			"error": true,
 		})
-		return ""
+		return "", err
 	}
 
-	u, err := url.Parse("/" + BUCKET_NAME + "/" + sw.Attrs().Name)
+	_, err = url.Parse("/" + BUCKET_NAME + "/" + sw.Attrs().Name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"Error":   true,
+			"Error": true,
 		})
-		return ""
+		return "", err
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message":  "file uploaded successfully",
-		"pathname": u.EscapedPath(),
-	})
-
-	return sw.Attrs().Name
+	return sw.Attrs().Name, nil
 }
