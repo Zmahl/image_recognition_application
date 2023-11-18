@@ -21,7 +21,7 @@ func receiveImage(w http.ResponseWriter, r *http.Request) {
 
 	file, h, err := r.FormFile("photo")
 
-	tmpfile, err := os.Create("./" + h.Filename)
+	tmpfile, err := os.Create("./images" + h.Filename)
 	defer tmpfile.Close()
 
 	if err != nil {
