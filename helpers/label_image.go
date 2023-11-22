@@ -14,11 +14,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var VISION_API_KEY = os.Getenv("vision_api_key")
+var visionApiKey = os.Getenv("VISION_API_KEY")
 
 func LabelImage(c *gin.Context, fileName string) {
 	var b bytes.Buffer
-	uri := fmt.Sprintf("gs://%s/%s", BUCKET_NAME, fileName)
+	uri := fmt.Sprintf("gs://%s/%s", bucketName, fileName)
 
 	labels, err := detectLabelsURI(&b, uri)
 	if err != nil {

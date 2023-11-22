@@ -11,16 +11,14 @@ import (
 
 var storageClient *storage.Client
 
-func IdentifyImageHandler(c *gin.Context) {
+func LabelImageHandler(c *gin.Context) {
 	fileName, err := helpers.UploadFile(c)
-	if err != nil {
+	if err != nil || len(fileName) == 0 {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error uploading image",
 		})
 		return
 	}
-	if len(fileName) == 0 {
-		return
-	}
+
 	helpers.LabelImage(c, fileName)
 }

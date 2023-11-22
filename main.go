@@ -8,6 +8,6 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.POST("label-image", handlers.IdentifyImageHandler)
+	r.POST("labels/image", handlers.LabelImageHandler)
 	r.Run()
 }
