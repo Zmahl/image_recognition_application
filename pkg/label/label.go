@@ -1,4 +1,4 @@
-package helpers
+package label
 
 import (
 	"bytes"
@@ -6,19 +6,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-
-	types "github.com/Zmahl/image_recognition_application/types"
 
 	vision "cloud.google.com/go/vision/apiv1"
+	"github.com/Zmahl/image_recognition_application/pkg/auth"
 	"github.com/gin-gonic/gin"
 )
 
-var visionApiKey = os.Getenv("VISION_API_KEY")
-
-func LabelImage(c *gin.Context, fileName string) {
+func LabelImage(c *gin.Context, credentials *auth.GoogleCloudCredentials, fileName string) {
 	var b bytes.Buffer
-	uri := fmt.Sprintf("gs://%s/%s", bucketName, fileName)
+	uri := fmt.Sprintf("gs://%s/%s", credentials.BucketName, fileName)
 
 	labels, err := detectLabelsURI(&b, uri)
 	if err != nil {
@@ -41,21 +37,21 @@ func LabelImage(c *gin.Context, fileName string) {
 	})
 }
 
-func detectLabelsURI(w io.Writer, file string) (*types.LabelResponse, error) {
+func detectLabelsURI(w io.Writer, file string) (*LabelResponse, error) {
 	ctx := context.Background()
 
 	client, err := vision.NewImageAnnotatorClient(ctx)
 	if err != nil {
-		return &types.LabelResponse{}, err
+		return &LabelResponse{}, err
 	}
 
 	image := vision.NewImageFromURI(file)
 	annotations, err := client.DetectLabels(ctx, image, nil, 10)
 	if err != nil {
-		return &types.LabelResponse{}, err
+		return &LabelResponse{}, err
 	}
 
-	var labels types.LabelResponse
+	var labels LabelResponse
 
 	for _, annotation := range annotations {
 		labels.LabelAnnotations = append(labels.LabelAnnotations, annotation.Description)

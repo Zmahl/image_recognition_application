@@ -1,7 +1,7 @@
 # Image Recognition API
 
 ## About
-This will be a go application that will receive images and identify objects in the image using it's underlying model
+This will be a go application that will receive images and identify objects in the image using it's underlying model.
 
 ## Required Setup
 This application will require a Google Cloud account. In addition, it will also require a Google Cloud storage bucket, an associated service account, and access to the Google Cloud Vision API.
@@ -15,7 +15,10 @@ This application will require a Google Cloud account. In addition, it will also 
 This application will require a google cloud storage bucket, with accompanying service account credentials
 All environment variables can be seen in `.env.sample`
 
-Run using `go run main.go`. This will use create a default Gin that will listen on `localhost:8080`
+Run using `go run main.go`. This will use create a web server (using the Gin library) that will listen for HTTP requests on `localhost:8080`.
+
+## How to Build
+
 
 ## Sample Request & Response
 Send an HTTP POST request using a curl command:
