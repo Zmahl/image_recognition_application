@@ -14,9 +14,9 @@ import (
 
 func LabelImage(c *gin.Context, credentials *auth.GoogleCloudCredentials, fileName string) {
 	var b bytes.Buffer
-	uri := fmt.Sprintf("gs://%s/%s", credentials.BucketName, fileName)
+	imageURI := fmt.Sprintf("gs://%s/%s", credentials.BucketName, fileName)
 
-	labels, err := detectLabelsURI(&b, uri)
+	labels, err := getLabelsFromImage(&b, imageURI)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -31,7 +31,7 @@ func LabelImage(c *gin.Context, credentials *auth.GoogleCloudCredentials, fileNa
 	})
 }
 
-func detectLabelsURI(w io.Writer, file string) (*LabelResponse, error) {
+func getLabelsFromImage(w io.Writer, file string) (*LabelResponse, error) {
 	ctx := context.Background()
 
 	client, err := vision.NewImageAnnotatorClient(ctx)
