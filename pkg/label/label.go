@@ -25,13 +25,7 @@ func LabelImage(c *gin.Context, credentials *auth.GoogleCloudCredentials, fileNa
 		return
 	}
 
-	if len(labels.LabelAnnotations) == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "No labels found.",
-		})
-		return
-	}
-
+	// Returns an array of labels, can be empty
 	c.JSON(http.StatusOK, gin.H{
 		"labels": labels.LabelAnnotations,
 	})
