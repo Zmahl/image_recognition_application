@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 type GoogleCloudStorageConfig struct {
 	BucketName           string
@@ -31,8 +34,9 @@ func New() *Config {
 // Sets values for keys from env
 func getEnv(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
+		fmt.Printf(value)
 		return value
 	}
-
+	fmt.Print(defaultVal)
 	return defaultVal
 }

@@ -1,15 +1,23 @@
 package auth
 
-import "os"
+import (
+	"github.com/Zmahl/image_recognition_application/pkg/config"
+)
 
-func setCredentials(credentials *GoogleCloudCredentials) {
-	credentials.VisionApiKey = os.Getenv("VISION_API_KEY")
-	credentials.CloudStorageServiceAccount = os.Getenv("GOOGLE_CLOUD_SERVIEC_ACCOUNT")
-	credentials.BucketName = os.Getenv("BUCKET_NAME")
+func setGCPCredentials(conf *config.Config) *GoogleCloudCredentials {
+	return &GoogleCloudCredentials{
+		BucketName:                 conf.Storage.BucketName,
+		CloudStorageServiceAccount: conf.Storage.GoogleServiceAccount,
+		VisionApiKey:               conf.Vision.VisionAPIKey,
+	}
 }
 
-func NewCloudCredentials() *GoogleCloudCredentials {
-	CloudCredentials := &GoogleCloudCredentials{}
-	setCredentials(CloudCredentials)
+func setCredentials(conf *config.Config) *GoogleCloudCredentials {
+	credentials := setGCPCredentials(conf)
+	return credentials
+}
+
+func NewCloudCredentials(conf *config.Config) *GoogleCloudCredentials {
+	CloudCredentials := setCredentials(conf)
 	return CloudCredentials
 }
