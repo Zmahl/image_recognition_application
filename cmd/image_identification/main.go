@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"github.com/Zmahl/image_recognition_application/pkg/auth"
