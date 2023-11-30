@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var CloudCredentials = auth.CreateCloudCredentials()
+var CloudCredentials = auth.NewCloudCredentials()
 
 func main() {
 	r := gin.Default()

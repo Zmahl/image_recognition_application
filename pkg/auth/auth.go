@@ -8,7 +8,7 @@ func setCredentials(credentials *GoogleCloudCredentials) {
 	credentials.BucketName = os.Getenv("BUCKET_NAME")
 }
 
-func CreateCloudCredentials() *GoogleCloudCredentials {
+func NewCloudCredentials() *GoogleCloudCredentials {
 	CloudCredentials := &GoogleCloudCredentials{}
 	setCredentials(CloudCredentials)
 	return CloudCredentials
