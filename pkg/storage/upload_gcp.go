@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/url"
@@ -8,13 +9,12 @@ import (
 	"github.com/Zmahl/image_recognition_application/pkg/auth"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
-	"google.golang.org/appengine"
 
 	"cloud.google.com/go/storage"
 )
 
 func UploadToGCP(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
-	ctx := appengine.NewContext(c.Request)
+	ctx := context.Background()
 
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(credentials.CloudStorageServiceAccount))
 	if err != nil {
