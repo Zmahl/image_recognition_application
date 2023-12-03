@@ -20,7 +20,6 @@ func LabelImage(c *gin.Context, credentials *auth.GoogleCloudCredentials, fileNa
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
-			"error":   true,
 		})
 		return
 	}

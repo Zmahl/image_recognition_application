@@ -1,7 +1,7 @@
 # Image Recognition API
 
 ## About
-This will be a go application that will receive images and identify objects in the image using it's underlying model.
+Go application host an HTTP server for receive HTTP requests containing an image. It will upload the image to a Google Cloud bucket and then use the Google Cloud Vision API to identify objects in the image. These will be returned to the user. 
 
 ## Required Setup
 This application will require a Google Cloud account. In addition, it will also require a Google Cloud storage bucket, an associated service account, and access to the Google Cloud Vision API. To start, the application will
@@ -13,24 +13,22 @@ variables declared.
   `CLOUD_BUCKET_SERVICE_ACCOUNT_CREDENTIALS` will require a json file that contains the permissions for accessing the cloud bucket. Credentials setup can be found here: https://cloud.google.com/storage/docs/authentication
   `CLOUD_BUCKET_NAME` will be the name of the bucket that the application will store images in. It must be created beforehand, and will be a Google Cloud storage bucket. 
 
-## How to Run
-This application will require a google cloud storage bucket, with accompanying service account credentials
-All environment variables can be seen in `.env.sample`
-
-Run using `go run cmd/image_recognition/main.go`. This will use create a web server (using the Gin library) that will listen for HTTP requests on `localhost:8080`.
-
 ## How to Build
 Run the command `go build cmd/image_recognition/main.go`.
 A new file called `main` will populate in the top level directory. To run the application run the command `./main`.
 
-## Sample Request & Response
-Send an HTTP POST request using a curl command:
+## How to Run
+This application will require a Google Cloud storage bucket and require accompanying Service Account credentials.
+All environment variables can be seen in `.env.sample`. Run using `go run cmd/image_recognition/main.go`.
 
+### Label an Image
+
+Endpoint is `localhost:8080`
+Example curl request is 
 ```
 curl -F "file=@<filepath/image-name>" "localhost:8080/label-image"
 ```
-
-Response:
+Sample Response
 ```
 {
   "labels": ["Water","Photograph","Sky","Building","Boat","Rectangle","Art","Urban design","Travel","Magenta"]
