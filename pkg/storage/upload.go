@@ -5,9 +5,11 @@ import (
 )
 
 type StorageProvider interface {
-	Upload(*gin.Context, string) (string, error)
+	Upload(*gin.Context) (string, error)
+	GetBucketName() string
+	GetCloudCredentials() string
 }
 
-func uploadFile(provider StorageProvider) {
-	provider.Upload()
+func UploadFile(provider StorageProvider, c *gin.Context) (string, error) {
+	return provider.Upload(c)
 }
