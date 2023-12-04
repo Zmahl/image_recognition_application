@@ -1,10 +1,13 @@
 package storage
 
 import (
-	"github.com/Zmahl/image_recognition_application/pkg/auth"
 	"github.com/gin-gonic/gin"
 )
 
-func UploadFile(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
-	return UploadToGCP(c, credentials)
+type StorageProvider interface {
+	Upload(*gin.Context, string) (string, error)
+}
+
+func uploadFile(provider StorageProvider) {
+	provider.Upload()
 }

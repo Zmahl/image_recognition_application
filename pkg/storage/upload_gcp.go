@@ -13,7 +13,10 @@ import (
 	"cloud.google.com/go/storage"
 )
 
-func UploadToGCP(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
+type GCPProvider struct StorageProvider{
+}
+
+func (GCPProvider) UploadToGCP(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
 	ctx := context.Background()
 
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(credentials.CloudStorageServiceAccount))
