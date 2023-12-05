@@ -15,5 +15,5 @@ func UploadFile(provider StorageProvider, c *gin.Context) (string, error) {
 }
 
 func GetStorageProvider() *StorageProvider {
-	return *GCPProvider
+	return &GCPProvider{}
 }
