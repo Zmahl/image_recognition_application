@@ -46,6 +46,7 @@ func init() {
 func main() {
 	auth := auth.NewCloudCredentials(conf)
 	r := gin.Default()
+	storage := StorageProvider.New()
 	r.POST("labels/image", label.LabelImageHandler(auth))
 	r.Run()
 }

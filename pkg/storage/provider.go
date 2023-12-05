@@ -13,3 +13,7 @@ type StorageProvider interface {
 func UploadFile(provider StorageProvider, c *gin.Context) (string, error) {
 	return provider.Upload(c)
 }
+
+func GetStorageProvider() *StorageProvider {
+	return *GCPProvider
+}

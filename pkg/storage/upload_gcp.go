@@ -13,10 +13,10 @@ import (
 	"cloud.google.com/go/storage"
 )
 
-type GCPProvider struct StorageProvider{
+type GCPProvider struct {
 }
 
-func (GCPProvider) UploadToGCP(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
+func (GCPProvider) Upload(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
 	ctx := context.Background()
 
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(credentials.CloudStorageServiceAccount))
@@ -51,4 +51,12 @@ func (GCPProvider) UploadToGCP(c *gin.Context, credentials *auth.GoogleCloudCred
 	}
 
 	return sw.Attrs().Name, nil
+}
+
+func (GCPProvider) GetBucketName() {
+
+}
+
+func (GCPProvider) GetCloudCredentials() {
+
 }
