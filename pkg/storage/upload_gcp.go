@@ -8,7 +8,6 @@ import (
 
 	"github.com/Zmahl/image_recognition_application/pkg/auth"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/api/option"
 
 	"cloud.google.com/go/storage"
 )
@@ -19,10 +18,13 @@ type GCPProvider struct {
 func (GCPProvider) Upload(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
 	ctx := context.Background()
 
-	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(credentials.CloudStorageServiceAccount))
+	// This should now be using ADC to access Google Cloud
+	storageClient, err := storage.NewClient(ctx)
 	if err != nil {
 		return "", err
 	}
+
+	defer storageClient.Close()
 
 	f, uploadedFile, err := c.Request.FormFile("file")
 	if err != nil {
