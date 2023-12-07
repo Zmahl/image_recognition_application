@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -12,6 +11,9 @@ type GoogleCloudStorageConfig struct {
 
 type VisionConfig struct {
 	VisionAPIKey string
+}
+
+type AWSCloudStorageConfig struct {
 }
 
 type Config struct {
@@ -34,9 +36,7 @@ func New() *Config {
 // Sets values for keys from env
 func getEnv(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
-		fmt.Printf(value)
 		return value
 	}
-	fmt.Print(defaultVal)
 	return defaultVal
 }

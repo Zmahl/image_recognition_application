@@ -8,6 +8,7 @@ type StorageProvider interface {
 	Upload(*gin.Context) (string, error)
 	GetBucketName() string
 	GetCloudCredentials() string
+	GetStorageType() string
 }
 
 func UploadFile(provider StorageProvider, c *gin.Context) (string, error) {
