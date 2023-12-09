@@ -8,7 +8,7 @@ import (
 )
 
 // Create a closure for the gin context so that credentials can be passed
-func LabelImageHandler(c *gin.Context, sp storage.StorageProvider, lb Labeller) gin.HandlerFunc {
+func LabelImageHandler(sp storage.StorageProvider, lb Labeller) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		fileName, err := sp.Upload(c)
 		if err != nil || len(fileName) == 0 {

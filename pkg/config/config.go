@@ -12,10 +12,10 @@ type ApplicationConfig struct {
 	Labeller label.Labeller
 }
 
-func New() *ApplicationConfig {
+func New() ApplicationConfig {
 	cloud_env := getEnv("CLOUD_ENV", "")
 	if cloud_env == "GCP" {
-		return &ApplicationConfig{
+		return ApplicationConfig{
 			Storage: storage.GCPProvider{
 				BucketName: getEnv("BUCKET_NAME", ""),
 			},
@@ -24,11 +24,11 @@ func New() *ApplicationConfig {
 			},
 		}
 	} else if cloud_env == "AWS" {
-		return &ApplicationConfig{
+		return ApplicationConfig{
 			Storage: storage.AWSProvider{},
 		}
 	} else {
-		return &ApplicationConfig{}
+		return ApplicationConfig{}
 	}
 }
 

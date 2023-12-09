@@ -1,26 +1,31 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Zmahl/image_recognition_application/pkg/config"
 	"github.com/Zmahl/image_recognition_application/pkg/label"
 	"github.com/Zmahl/image_recognition_application/pkg/storage"
 	"github.com/gin-gonic/gin"
 )
 
-var conf *config.ApplicationConfig
+var conf config.ApplicationConfig
 
 func init() {
 	conf = config.New()
+	if conf == (config.ApplicationConfig{}) {
+		log.Fatalf("Failed to load config")
+	}
 }
 
 func main() {
 	r := gin.Default()
-	var storage storage.StorageProvider
-	var label label.Labeller
+	var stor storage.StorageProvider
+	var lab label.Labeller
 
-	storage = conf.Storage
-	label = conf.Labeller
+	stor = conf.Storage
+	lab = conf.Labeller
 
-	r.POST("labels/image", label.LabelImageHandler(storage, label))
+	r.POST("labels/image", label.LabelImageHandler(stor, lab))
 	r.Run()
 }
