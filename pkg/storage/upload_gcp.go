@@ -6,16 +6,16 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/Zmahl/image_recognition_application/pkg/auth"
 	"github.com/gin-gonic/gin"
 
 	"cloud.google.com/go/storage"
 )
 
 type GCPProvider struct {
+	BucketName string
 }
 
-func (GCPProvider) Upload(c *gin.Context, credentials *auth.GoogleCloudCredentials) (string, error) {
+func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	ctx := context.Background()
 
 	// This should now be using ADC to access Google Cloud
@@ -33,7 +33,7 @@ func (GCPProvider) Upload(c *gin.Context, credentials *auth.GoogleCloudCredentia
 
 	defer f.Close()
 
-	sw := storageClient.Bucket(credentials.BucketName).Object(uploadedFile.Filename).NewWriter(ctx)
+	sw := storageClient.Bucket(gcp.BucketName).Object(uploadedFile.Filename).NewWriter(ctx)
 	if _, err := io.Copy(sw, f); err != nil {
 		return "", err
 	}
@@ -47,7 +47,7 @@ func (GCPProvider) Upload(c *gin.Context, credentials *auth.GoogleCloudCredentia
 
 	// checks that the object was uploaded by checking a valid url.
 	// sw.Attrs is only valid if there is a successfully written object
-	_, err = url.Parse("/" + credentials.BucketName + "/" + sw.Attrs().Name)
+	_, err = url.Parse("/" + gcp.BucketName + "/" + sw.Attrs().Name)
 	if err != nil {
 		return "", err
 	}
@@ -55,10 +55,6 @@ func (GCPProvider) Upload(c *gin.Context, credentials *auth.GoogleCloudCredentia
 	return sw.Attrs().Name, nil
 }
 
-func (GCPProvider) GetBucketName() {
-
-}
-
-func (GCPProvider) GetCloudCredentials() {
-
+func (gcp GCPProvider) GetBucket() string {
+	return gcp.BucketName
 }

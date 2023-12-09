@@ -8,13 +8,20 @@ import (
 	"net/http"
 
 	vision "cloud.google.com/go/vision/apiv1"
-	"github.com/Zmahl/image_recognition_application/pkg/auth"
 	"github.com/gin-gonic/gin"
 )
 
-func LabelImage(c *gin.Context, credentials *auth.GoogleCloudCredentials, fileName string) {
+type LabelResponse struct {
+	LabelAnnotations []string `json:"labelAnnotations"`
+}
+
+type GoogleVision struct {
+	VisionApiKey string
+}
+
+func (gv GoogleVision) LabelImage(c *gin.Context, bucketName string, fileName string) {
 	var b bytes.Buffer
-	imageURI := fmt.Sprintf("gs://%s/%s", credentials.BucketName, fileName)
+	imageURI := fmt.Sprintf("gs://%s/%s", bucketName, fileName)
 
 	labels, err := getLabelsFromImage(&b, imageURI)
 	if err != nil {
@@ -51,4 +58,8 @@ func getLabelsFromImage(w io.Writer, file string) (*LabelResponse, error) {
 	}
 
 	return &labels, nil
+}
+
+func (gv GoogleVision) GetLabelCredentials() string {
+	return gv.VisionApiKey
 }
