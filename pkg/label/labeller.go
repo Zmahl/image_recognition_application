@@ -5,6 +5,6 @@ import (
 )
 
 type Labeller interface {
-	LabelImage(*gin.Context, string, string)
+	LabelImage(*gin.Context, string)
 	GetLabelCredentials() string
 }

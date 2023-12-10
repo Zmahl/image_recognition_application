@@ -17,7 +17,8 @@ func New() ApplicationConfig {
 	if cloud_env == "GCP" {
 		return ApplicationConfig{
 			Storage: storage.GCPProvider{
-				BucketName: getEnv("BUCKET_NAME", ""),
+				BucketName:     getEnv("BUCKET_NAME", ""),
+				ServiceAccount: getEnv("SERVICE_ACCOUNT", ""),
 			},
 			Labeller: label.GoogleVision{
 				VisionApiKey: getEnv("VISION_API_KEY", ""),
@@ -30,10 +31,6 @@ func New() ApplicationConfig {
 	} else {
 		return ApplicationConfig{}
 	}
-}
-
-func setStorage() {
-
 }
 
 // Sets values for keys from env

@@ -3,8 +3,8 @@ package label
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	vision "cloud.google.com/go/vision/apiv1"
@@ -19,12 +19,12 @@ type GoogleVision struct {
 	VisionApiKey string
 }
 
-func (gv GoogleVision) LabelImage(c *gin.Context, bucketName string, fileName string) {
+func (gv GoogleVision) LabelImage(c *gin.Context, url string) {
 	var b bytes.Buffer
-	imageURI := fmt.Sprintf("gs://%s/%s", bucketName, fileName)
-
-	labels, err := getLabelsFromImage(&b, imageURI)
+	log.Println("Getting labels from image")
+	labels, err := getLabelsFromImage(&b, url)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
