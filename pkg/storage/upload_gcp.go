@@ -2,14 +2,12 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
-	credentials "cloud.google.com/go/iam/credentials/apiv1"
-	"cloud.google.com/go/iam/credentials/apiv1/credentialspb"
 	"cloud.google.com/go/storage"
 )
 
@@ -20,10 +18,6 @@ type GCPProvider struct {
 
 func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	ctx := context.Background()
-	credCtx, err := credentials.NewIamCredentialsClient(ctx)
-	if err != nil {
-		return "", err
-	}
 
 	// This should now be using ADC to access Google Cloud
 	storageClient, err := storage.NewClient(ctx)
@@ -55,27 +49,7 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 		return "", err
 	}
 
-	// Need signed url for labellers to access
-	url, err := storage.SignedURL(gcp.BucketName, uploadedFile.Filename, &storage.SignedURLOptions{
-		Method:         "GET",
-		GoogleAccessID: gcp.ServiceAccount,
-		SignBytes: func(b []byte) ([]byte, error) {
-			req := &credentialspb.SignBlobRequest{
-				Payload: b,
-				Name:    gcp.ServiceAccount,
-			}
-			resp, err := credCtx.SignBlob(ctx, req)
-			if err != nil {
-				return nil, err
-			}
-			return resp.SignedBlob, err
-		},
-		Expires: time.Now().Add(time.Second * 60),
-	})
-	log.Print(err)
-	if err != nil {
-		return "", err
-	}
+	url := fmt.Sprintf("gs://%s/%s", gcp.BucketName, uploadedFile.Filename)
 
 	return url, nil
 }
