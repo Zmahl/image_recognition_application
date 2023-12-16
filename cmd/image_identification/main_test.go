@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/Zmahl/image_recognition_application/pkg/config"
@@ -38,7 +39,8 @@ func TestRequestWithoutFile(t *testing.T) {
 func TestRequestWithFile(t *testing.T) {
 	var buf bytes.Buffer
 	multipartWriter := multipart.NewWriter(&buf)
-	file, err := os.Open("github.com/Zmahl/image_recognition_application/test_image/pencil-test.jpeg")
+	absPath, _ := filepath.Abs("../../test_image/pencil-test.jpeg")
+	file, err := os.Open(absPath)
 	if err != nil {
 		log.Fatal(err)
 	}
