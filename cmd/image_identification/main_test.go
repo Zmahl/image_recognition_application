@@ -2,9 +2,7 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"net/http/httptest"
-	"net/textproto"
 	"testing"
 
 	"github.com/Zmahl/image_recognition_application/pkg/config"
@@ -17,14 +15,14 @@ func init() {
 	}
 }
 
-func TestLabelRoute(t *testing.T) {
-	imageBytes, err := ioutil.ReadFile("github.com/Zmahl/image_recognition_application/pkg/test_image/pencil_test.jpeg")
-
+func TestMain(t *testing.T) {
 	router := setupRouter()
-	w := httptest.NewRecorder()
-	file, err := 
-	req, _ := http.NewRequest("POST", "/labels/image", nil)
-	router.ServeHTTP(w, req)
+	recorder := httptest.NewRecorder()
 
-
+	router.ServeHTTP(recorder, httptest.NewRequest("POST", "/labels/image", nil))
+	t.Run("Returns 500 status code", func(t *testing.T) {
+		if recorder.Code != 500 {
+			t.Error("Expected 500, got ", recorder.Code)
+		}
+	})
 }
