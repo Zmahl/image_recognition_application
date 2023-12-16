@@ -19,13 +19,18 @@ func init() {
 }
 
 func main() {
-	r := gin.Default()
+	r := setupRouter()
+	r.Run()
+}
+
+func setupRouter() *gin.Engine {
+	router := gin.Default()
 	var stor storage.StorageProvider
 	var lab label.Labeller
 
 	stor = conf.Storage
 	lab = conf.Labeller
 
-	r.POST("labels/image", label.LabelImageHandler(stor, lab))
-	r.Run()
+	router.POST("labels/image", label.LabelImageHandler(stor, lab))
+	return router
 }

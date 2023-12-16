@@ -1,21 +1,30 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"net/textproto"
+	"testing"
+
+	"github.com/Zmahl/image_recognition_application/pkg/config"
 )
 
-func TestLabelRoute(t *testing.T)  {
-	gin.SetMode(gin.TestMode)
-
-	router := gin.Default()
-	router.POST("/labels/image", func (c *gin.Context)) {
-		c.JSON(200, gin.H{
-
-		})
+func init() {
+	conf = config.New()
+	if conf == (config.ApplicationConfig{}) {
+		log.Fatalf("Failed to load config")
 	}
 }
 
-w := httptest.NewRecorder()
-req, _ := http.NewRequest("POST", "/labels/image", nil)
-router.ServeHTTP(w, req)
+func TestLabelRoute(t *testing.T) {
+	imageBytes, err := ioutil.ReadFile("github.com/Zmahl/image_recognition_application/pkg/test_image/pencil_test.jpeg")
+
+	router := setupRouter()
+	w := httptest.NewRecorder()
+	file, err := 
+	req, _ := http.NewRequest("POST", "/labels/image", nil)
+	router.ServeHTTP(w, req)
+
+
+}
