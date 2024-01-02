@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/Zmahl/image_recognition_application/pkg/label"
 	"github.com/Zmahl/image_recognition_application/pkg/storage"
+	"github.com/Zmahl/image_recognition_application/pkg/utils"
 )
 
 type ApplicationConfig struct {
@@ -23,4 +24,8 @@ func CreateAppConfig(cloudEnv string) ApplicationConfig {
 	} else {
 		return ApplicationConfig{}
 	}
+}
+
+func GetCloudEnvironment() string {
+	return utils.GetEnv("CLOUD_ENV", "")
 }

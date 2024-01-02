@@ -12,7 +12,7 @@ import (
 var conf config.ApplicationConfig
 
 func init() {
-	conf = config.CreateAppConfig()
+	conf = config.CreateAppConfig(config.GetCloudEnvironment())
 	if conf == (config.ApplicationConfig{}) {
 		log.Fatalf("Failed to load config")
 	}

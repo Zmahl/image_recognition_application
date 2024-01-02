@@ -11,6 +11,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	bucketEnv         = "BUCKET_NAME"
+	serviceAccountEnv = "SERVICE_ACCOUNT"
+)
+
 type GCPProvider struct {
 	BucketName     string
 	ServiceAccount string
@@ -56,8 +61,8 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 
 func CreateGCPStorage() *GCPProvider {
 	return &GCPProvider{
-		BucketName:     utils.GetEnv("BUCKET_NAME", ""),
-		ServiceAccount: utils.GetEnv("SERVICE_ACCOUNT", ""),
+		BucketName:     utils.GetEnv(bucketEnv, ""),
+		ServiceAccount: utils.GetEnv(serviceAccountEnv, ""),
 	}
 }
 
