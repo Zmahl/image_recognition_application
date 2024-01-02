@@ -12,7 +12,7 @@ import (
 var conf config.ApplicationConfig
 
 func init() {
-	conf = config.New()
+	conf = config.CreateAppConfig()
 	if conf == (config.ApplicationConfig{}) {
 		log.Fatalf("Failed to load config")
 	}

@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	vision "cloud.google.com/go/vision/apiv1"
+	"github.com/Zmahl/image_recognition_application/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -58,6 +59,12 @@ func getLabelsFromImage(w io.Writer, file string) (*LabelResponse, error) {
 	}
 
 	return &labels, nil
+}
+
+func CreateGoogleVision() *GoogleVision {
+	return &GoogleVision{
+		VisionApiKey: utils.GetEnv("VISION_API_KEY", ""),
+	}
 }
 
 func (gv GoogleVision) GetLabelCredentials() string {

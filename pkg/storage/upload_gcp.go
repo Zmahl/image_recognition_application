@@ -6,9 +6,9 @@ import (
 	"io"
 	"log"
 
-	"github.com/gin-gonic/gin"
-
 	"cloud.google.com/go/storage"
+	"github.com/Zmahl/image_recognition_application/pkg/utils"
+	"github.com/gin-gonic/gin"
 )
 
 type GCPProvider struct {
@@ -52,6 +52,13 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	url := fmt.Sprintf("gs://%s/%s", gcp.BucketName, uploadedFile.Filename)
 
 	return url, nil
+}
+
+func CreateGCPStorage() *GCPProvider {
+	return &GCPProvider{
+		BucketName:     utils.GetEnv("BUCKET_NAME", ""),
+		ServiceAccount: utils.GetEnv("SERVICE_ACCOUNT", ""),
+	}
 }
 
 func (gcp GCPProvider) GetBucket() string {
