@@ -35,9 +35,8 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	defer f.Close()
-	log.Println(gcp.BucketName, uploadedFile.Filename)
+
 	sw := storageClient.Bucket(gcp.BucketName).Object(uploadedFile.Filename).NewWriter(ctx)
 	if _, err := io.Copy(sw, f); err != nil {
 		return "", err
@@ -59,10 +58,9 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	return url, nil
 }
 
-func CreateGCPStorage() *GCPProvider {
+func CreateGCPStorage(bucketEnv string) *GCPProvider {
 	return &GCPProvider{
-		BucketName:     utils.GetEnv(bucketEnv, ""),
-		ServiceAccount: utils.GetEnv(serviceAccountEnv, ""),
+		BucketName: utils.GetEnv(bucketEnv, ""),
 	}
 }
 

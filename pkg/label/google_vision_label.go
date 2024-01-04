@@ -12,8 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const visionApiEnv = "VISION_API_KEY"
-
 type LabelResponse struct {
 	LabelAnnotations []string `json:"labelAnnotations"`
 }
@@ -63,7 +61,7 @@ func getLabelsFromImage(w io.Writer, file string) (*LabelResponse, error) {
 	return &labels, nil
 }
 
-func CreateGoogleVision() *GoogleVision {
+func CreateGoogleVision(visionApiEnv string) *GoogleVision {
 	return &GoogleVision{
 		VisionApiKey: utils.GetEnv(visionApiEnv, ""),
 	}
