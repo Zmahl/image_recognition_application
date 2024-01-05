@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 
 	"cloud.google.com/go/storage"
 	"github.com/Zmahl/image_recognition_application/pkg/utils"
@@ -41,7 +40,6 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	}
 
 	if err := sw.Close(); err != nil {
-		log.Println(err)
 		return "", err
 	}
 
