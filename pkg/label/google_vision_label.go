@@ -22,7 +22,7 @@ type GoogleVision struct {
 
 func (gv GoogleVision) LabelImage(c *gin.Context, url string) {
 	var b bytes.Buffer
-	log.Print(url)
+
 	labels, err := getLabelsFromImage(&b, url)
 	if err != nil {
 		log.Println(err)
