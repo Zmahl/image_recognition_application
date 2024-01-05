@@ -12,13 +12,11 @@ import (
 )
 
 const (
-	bucketEnv         = "BUCKET_NAME"
-	serviceAccountEnv = "SERVICE_ACCOUNT"
+	bucketEnv = "BUCKET_NAME"
 )
 
 type GCPProvider struct {
-	BucketName     string
-	ServiceAccount string
+	BucketName string
 }
 
 func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
@@ -66,8 +64,4 @@ func CreateGCPStorage(bucketEnv string) *GCPProvider {
 
 func (gcp GCPProvider) GetBucket() string {
 	return gcp.BucketName
-}
-
-func (gcp GCPProvider) GetServiceAccount() string {
-	return gcp.ServiceAccount
 }
