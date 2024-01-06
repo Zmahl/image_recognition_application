@@ -1,8 +1,11 @@
 package storage
 
 import (
+	"bytes"
 	"errors"
-	"fmt"
+	"io"
+	"mime/multipart"
+	"os"
 	"testing"
 
 	"github.com/Zmahl/image_recognition_application/pkg/utils"
@@ -15,32 +18,55 @@ const (
 	testFile   = "pencil-test"
 )
 
-type DummyStorage struct {
-	BucketName string
-}
-
-func (d DummyStorage) Upload(fileName string) (string, error) {
+func (d GCPProvider) UploadTestFile(fileName string) (string, error) {
 	if fileName == "" {
 		return "", errors.New("File name not defined")
 	}
 
-	url := fmt.Sprintf("gs://%s/%s", d.BucketName, testFile)
+	file, fileName, err := createMultipartFile()
+	if err != nil {
+		return "", err
+	}
+
+	url, err := d.Upload(file, fileName)
+	if err != nil {
+		return "", err
+	}
+
 	return url, nil
 }
 
-func (d DummyStorage) GetBucket() string {
-	return d.BucketName
+func createMultipartFile() (multipart.File, string, error) {
+	var buffer bytes.Buffer
+
+	file, err := os.Open(testImagePath)
+	if err != nil {
+		return nil, "", err
+	}
+	defer file.Close()
+
+	w := multipart.NewWriter(&buffer)
+
+	fw, err := w.CreateFormFile("file", testFile)
+	if err != nil {
+		return nil, "", err
+	}
+
+	if _, err := io.Copy(fw, file); err != nil {
+		return nil, "", err
+	}
+
 }
 
-func CreateDummyBucket(bucketName string) DummyStorage {
-	return DummyStorage{BucketName: bucketName}
+func CreateTestBucket(bucketName string) GCPProvider {
+	return GCPProvider{BucketName: bucketName}
 }
 
 func TestUpload(t *testing.T) {
 	t.Run("upload should return a google cloud storage string", func(t *testing.T) {
-		storage := CreateDummyBucket(testBucket)
+		storage := CreateTestBucket(testBucket)
 
-		got, err := storage.Upload(testImagePath)
+		got, err := storage.UploadTestFile(testImagePath)
 		want := "gs://test_bucket/pencil-test"
 
 		if err != nil {
@@ -53,7 +79,7 @@ func TestUpload(t *testing.T) {
 	})
 
 	t.Run("upload should return a with empty file", func(t *testing.T) {
-		storage := CreateDummyBucket(testBucket)
+		storage := CreateTestBucket(testBucket)
 
 		got, err := storage.Upload("")
 		want := "gs://test_bucket/"

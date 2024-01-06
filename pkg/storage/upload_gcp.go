@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"mime/multipart"
 
 	"cloud.google.com/go/storage"
 	"github.com/Zmahl/image_recognition_application/pkg/utils"
-	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -18,7 +18,7 @@ type GCPProvider struct {
 	BucketName string
 }
 
-func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
+func (gcp GCPProvider) Upload(file multipart.File, fileName string) (string, error) {
 	ctx := context.Background()
 
 	// This should now be using ADC to access Google Cloud
@@ -28,14 +28,8 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	}
 	defer storageClient.Close()
 
-	f, uploadedFile, err := c.Request.FormFile("file")
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-
-	sw := storageClient.Bucket(gcp.BucketName).Object(uploadedFile.Filename).NewWriter(ctx)
-	if _, err := io.Copy(sw, f); err != nil {
+	sw := storageClient.Bucket(gcp.BucketName).Object(fileName).NewWriter(ctx)
+	if _, err := io.Copy(sw, file); err != nil {
 		return "", err
 	}
 
@@ -44,12 +38,12 @@ func (gcp GCPProvider) Upload(c *gin.Context) (string, error) {
 	}
 
 	// Attrs() method will return an error if the object does not exist in bucket
-	_, err = storageClient.Bucket(gcp.BucketName).Object(uploadedFile.Filename).Attrs(ctx)
+	_, err = storageClient.Bucket(gcp.BucketName).Object(fileName).Attrs(ctx)
 	if err != nil {
 		return "", err
 	}
 
-	url := fmt.Sprintf("gs://%s/%s", gcp.BucketName, uploadedFile.Filename)
+	url := fmt.Sprintf("gs://%s/%s", gcp.BucketName, fileName)
 
 	return url, nil
 }

@@ -10,7 +10,8 @@ import (
 // Create a closure for the gin context so that credentials can be passed
 func LabelImageHandler(sp storage.StorageProvider, lb Labeller) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		url, err := sp.Upload(c)
+		file, fileHeader, err := c.Request.FormFile("file")
+		url, err := sp.Upload(file, fileHeader.Filename)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "Error uploading image",
