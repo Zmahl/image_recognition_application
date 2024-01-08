@@ -1,34 +1,18 @@
 package label
 
 import (
-	"net/http"
-	"net/http/httptest"
+	"os"
 	"testing"
-
-	"github.com/gin-gonic/gin"
 )
 
-type DummyGoogleVision struct {
-}
-
-func (d DummyGoogleVision) LabelImage(c *gin.Context, url string) {
-
-}
-
-func CreateDummyGoogleVision() DummyGoogleVision {
-	return DummyGoogleVision{}
-}
-
-func CreateMockContext() *gin.Engine {
-	router := gin.Default()
-
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "labels/image", nil)
-	router.ServeHTTP(w, req)
-
-	return router
+func CreateTestGoogleVision() *GoogleVision {
+	return &GoogleVision{VisionApiKey: os.Getenv("VISION_API_KEY")}
 }
 
 func TestVision(t *testing.T) {
+	//googleVision := CreateTestGoogleVision()
 
+	t.Run("testing that the labeller returns the correct annotations from test image", func(t *testing.T) {
+
+	})
 }

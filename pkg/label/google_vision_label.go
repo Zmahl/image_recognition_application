@@ -2,7 +2,6 @@ package label
 
 import (
 	"context"
-	"io"
 
 	vision "cloud.google.com/go/vision/apiv1"
 	"github.com/Zmahl/image_recognition_application/pkg/utils"
@@ -16,7 +15,7 @@ type GoogleVision struct {
 	VisionApiKey string
 }
 
-func (gv GoogleVision) LabelImage(w io.Writer, file string) (*LabelResponse, error) {
+func (gv GoogleVision) LabelImage(file string) (*LabelResponse, error) {
 	ctx := context.Background()
 
 	client, err := vision.NewImageAnnotatorClient(ctx)
