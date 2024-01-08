@@ -2,14 +2,13 @@ package storage
 
 import (
 	"errors"
-
-	"github.com/gin-gonic/gin"
+	"mime/multipart"
 )
 
 type AWSProvider struct {
 }
 
-func (aws AWSProvider) Upload(c *gin.Context) (string, error) {
+func (aws AWSProvider) Upload(file multipart.File, fileName string) (string, error) {
 	return "", errors.New("not implemented")
 }
 

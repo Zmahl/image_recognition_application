@@ -3,8 +3,10 @@ package storage
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"testing"
 
@@ -14,21 +16,25 @@ import (
 var testImagePath = utils.GetEnv("TEST_IMAGE", "")
 
 const (
-	testBucket = "test_bucket"
-	testFile   = "pencil-test"
+	testBucket = "zach-test-bucket-images"
+	testFile   = "pencil-test.jpeg"
 )
 
 func (d GCPProvider) UploadTestFile(fileName string) (string, error) {
 	if fileName == "" {
 		return "", errors.New("File name not defined")
 	}
-
-	file, fileName, err := createMultipartFile()
+	request, err := createRequest()
 	if err != nil {
 		return "", err
 	}
 
-	url, err := d.Upload(file, fileName)
+	file, fileHeader, err := request.FormFile("file")
+	if err != nil {
+		return "", err
+	}
+
+	url, err := d.Upload(file, fileHeader.Filename)
 	if err != nil {
 		return "", err
 	}
@@ -36,38 +42,16 @@ func (d GCPProvider) UploadTestFile(fileName string) (string, error) {
 	return url, nil
 }
 
-func createMultipartFile() (multipart.File, string, error) {
-	var buffer bytes.Buffer
-
-	file, err := os.Open(testImagePath)
-	if err != nil {
-		return nil, "", err
-	}
-	defer file.Close()
-
-	w := multipart.NewWriter(&buffer)
-
-	fw, err := w.CreateFormFile("file", testFile)
-	if err != nil {
-		return nil, "", err
-	}
-
-	if _, err := io.Copy(fw, file); err != nil {
-		return nil, "", err
-	}
-
-}
-
 func CreateTestBucket(bucketName string) GCPProvider {
 	return GCPProvider{BucketName: bucketName}
 }
 
 func TestUpload(t *testing.T) {
-	t.Run("upload should return a google cloud storage string", func(t *testing.T) {
-		storage := CreateTestBucket(testBucket)
 
-		got, err := storage.UploadTestFile(testImagePath)
-		want := "gs://test_bucket/pencil-test"
+	storage := CreateTestBucket(testBucket)
+	t.Run("upload should return a google cloud storage string", func(t *testing.T) {
+		got, err := storage.UploadTestFile(testFile)
+		want := "gs://zach-test-bucket-images/pencil-test.jpeg"
 
 		if err != nil {
 			t.Errorf("file was empty, got %s want %s", got, want)
@@ -79,9 +63,7 @@ func TestUpload(t *testing.T) {
 	})
 
 	t.Run("upload should return a with empty file", func(t *testing.T) {
-		storage := CreateTestBucket(testBucket)
-
-		got, err := storage.Upload("")
+		got, err := storage.UploadTestFile("")
 		want := "gs://test_bucket/"
 
 		if err == nil {
@@ -89,4 +71,38 @@ func TestUpload(t *testing.T) {
 		}
 	})
 
+	// Teardown code testing the upload
+	storage.DeleteImage(testFile)
+}
+
+func createRequest() (*http.Request, error) {
+	file, err := os.Open(testImagePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	var buffer bytes.Buffer
+
+	writer := multipart.NewWriter(&buffer)
+	part, err := writer.CreateFormFile("file", testFile)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return nil, err
+	}
+	writer.Close()
+
+	bucketURI := fmt.Sprintf("gs://%s/%s", testBucket, testFile)
+
+	req, err := http.NewRequest(http.MethodPost, bucketURI, &buffer)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	client.Do(req)
+
+	return req, err
 }
