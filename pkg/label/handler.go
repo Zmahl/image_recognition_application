@@ -18,7 +18,17 @@ func LabelImageHandler(sp storage.StorageProvider, lb Labeller) gin.HandlerFunc 
 			})
 			return
 		}
-		lb.LabelImage(c, url)
+
+		labels, err := lb.LabelImage(url)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Error identifying image",
+			})
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"labels": &labels,
+		})
 	}
 
 	return fn
