@@ -21,18 +21,26 @@ func (conf ApplicationConfig) VerifyConfig() {
 }
 
 func CreateAppConfig(cloudEnv string) ApplicationConfig {
+	var config ApplicationConfig
+
+	setCloud(&config, cloudEnv)
+	setLabel(&config)
+
+	return config
+}
+
+func setCloud(config *ApplicationConfig, cloudEnv string) {
 	if cloudEnv == "GCP" {
-		return ApplicationConfig{
-			Storage:  storage.CreateGCPStorage(GCP_BUCKET_ENV),
-			Labeller: label.CreateGoogleVision(GOOGLE_VISION_ENV),
-		}
-	} else if cloudEnv == "AWS" {
-		return ApplicationConfig{
-			Storage: storage.AWSProvider{},
-		}
-	} else {
-		return ApplicationConfig{}
+		config.Storage = storage.CreateGCPStorage(GCP_BUCKET_ENV)
 	}
+
+	if cloudEnv == "AWS" {
+		config.Storage = storage.AWSProvider{}
+	}
+}
+
+func setLabel(config *ApplicationConfig) {
+	config.Labeller = label.CreateGoogleVision(GOOGLE_VISION_ENV)
 }
 
 func GetCloudEnvironment() string {
