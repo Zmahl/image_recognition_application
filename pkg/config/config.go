@@ -1,10 +1,14 @@
 package config
 
 import (
-	"os"
-
 	"github.com/Zmahl/image_recognition_application/pkg/label"
 	"github.com/Zmahl/image_recognition_application/pkg/storage"
+	"github.com/Zmahl/image_recognition_application/pkg/utils"
+)
+
+const (
+	GCP_BUCKET_ENV    = "BUCKET_NAME"
+	GOOGLE_VISION_ENV = "VISION_API_KEY"
 )
 
 type ApplicationConfig struct {
@@ -12,19 +16,17 @@ type ApplicationConfig struct {
 	Labeller label.Labeller
 }
 
-func New() ApplicationConfig {
-	cloud_env := getEnv("CLOUD_ENV", "")
-	if cloud_env == "GCP" {
+func (conf ApplicationConfig) VerifyConfig() {
+	return
+}
+
+func CreateAppConfig(cloudEnv string) ApplicationConfig {
+	if cloudEnv == "GCP" {
 		return ApplicationConfig{
-			Storage: storage.GCPProvider{
-				BucketName:     getEnv("BUCKET_NAME", ""),
-				ServiceAccount: getEnv("SERVICE_ACCOUNT", ""),
-			},
-			Labeller: label.GoogleVision{
-				VisionApiKey: getEnv("VISION_API_KEY", ""),
-			},
+			Storage:  storage.CreateGCPStorage(GCP_BUCKET_ENV),
+			Labeller: label.CreateGoogleVision(GOOGLE_VISION_ENV),
 		}
-	} else if cloud_env == "AWS" {
+	} else if cloudEnv == "AWS" {
 		return ApplicationConfig{
 			Storage: storage.AWSProvider{},
 		}
@@ -33,10 +35,6 @@ func New() ApplicationConfig {
 	}
 }
 
-// Sets values for keys from env
-func getEnv(key string, defaultVal string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultVal
+func GetCloudEnvironment() string {
+	return utils.GetEnv("CLOUD_ENV", "")
 }

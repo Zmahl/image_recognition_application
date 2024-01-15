@@ -1,10 +1,8 @@
 package storage
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "mime/multipart"
 
 type StorageProvider interface {
-	Upload(*gin.Context) (string, error)
+	Upload(multipart.File, string) (string, error)
 	GetBucket() string
 }

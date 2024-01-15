@@ -1,10 +1,6 @@
 package label
 
-import (
-	"github.com/gin-gonic/gin"
-)
-
 type Labeller interface {
-	LabelImage(*gin.Context, string)
+	LabelImage(string) (*LabelResponse, error)
 	GetLabelCredentials() string
 }

@@ -1,14 +1,10 @@
 package label
 
 import (
-	"bytes"
 	"context"
-	"io"
-	"log"
-	"net/http"
 
 	vision "cloud.google.com/go/vision/apiv1"
-	"github.com/gin-gonic/gin"
+	"github.com/Zmahl/image_recognition_application/pkg/utils"
 )
 
 type LabelResponse struct {
@@ -19,25 +15,7 @@ type GoogleVision struct {
 	VisionApiKey string
 }
 
-func (gv GoogleVision) LabelImage(c *gin.Context, url string) {
-	var b bytes.Buffer
-	log.Print(url)
-	labels, err := getLabelsFromImage(&b, url)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-		})
-		return
-	}
-
-	// Returns an array of labels, can be empty
-	c.JSON(http.StatusOK, gin.H{
-		"labels": labels.LabelAnnotations,
-	})
-}
-
-func getLabelsFromImage(w io.Writer, file string) (*LabelResponse, error) {
+func (gv GoogleVision) LabelImage(file string) (*LabelResponse, error) {
 	ctx := context.Background()
 
 	client, err := vision.NewImageAnnotatorClient(ctx)
@@ -58,6 +36,12 @@ func getLabelsFromImage(w io.Writer, file string) (*LabelResponse, error) {
 	}
 
 	return &labels, nil
+}
+
+func CreateGoogleVision(visionApiEnv string) *GoogleVision {
+	return &GoogleVision{
+		VisionApiKey: utils.GetEnv(visionApiEnv, ""),
+	}
 }
 
 func (gv GoogleVision) GetLabelCredentials() string {
